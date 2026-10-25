@@ -25,23 +25,7 @@ export function getDomain(items: TimelineItem[]): [number, number] {
   return [s, Math.max(e, s + MIN_SPAN)];
 }
 
-export const MOCK_ITEMS: TimelineItem[] = [
-  { id: "bra", label: "BRA", lane: 0, start: d(2025), end: d(2027, 6), color: 14 },
-  { id: "frcr", label: "FRCR", lane: 0, start: d(2027, 6), end: d(2030), color: 1 },
-  { id: "swiss", label: "Swiss", lane: 0, start: d(2030), end: d(2046), color: 8 },
-  { id: "work", label: "Work", lane: 1, start: d(2025), end: d(2045, 9), color: 15 },
-  { id: "retire", label: "Retire", lane: 1, start: d(2045, 9), end: d(2094), color: 2 },
-  { id: "cid", label: "Cidadania", lane: 2, start: d(2025), end: d(2030), color: 9 },
-  { id: "idi", label: "Idiomas", lane: 3, start: d(2025), end: d(2030), color: 16 },
-  { id: "pais", label: "Pai, Mãe, Sogro, Sogra", lane: 4, start: d(2025), end: d(2065), color: 3 },
-  { id: "vo", label: "Vô", lane: 5, start: d(2025), end: d(2035), color: 10 },
-  { id: "couple", label: "Couple", lane: 6, start: d(2025), end: d(2030), color: 17 },
-  { id: "kids", label: "Kids", lane: 6, start: d(2030), end: d(2040, 6), color: 4 },
-  { id: "teens", label: "Teens", lane: 6, start: d(2040, 6), end: d(2055), color: 11 },
-  { id: "netos", label: "Netos", lane: 6, start: d(2055), end: d(2094), color: 18 },
-  { id: "doppler", label: "Doppler", lane: 7, start: d(2025), end: d(2040, 6), color: 5 },
-  { id: "olivia", label: "Olivia", lane: 8, start: d(2025), end: d(2036), color: 12 },
-];
+export const MOCK_ITEMS: TimelineItem[] = [];
 
 export const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
 

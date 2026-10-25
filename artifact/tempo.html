@@ -152,7 +152,11 @@ svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width:
 #hl { left: 0; transform: translateX(-50%); }
 #hr { right: 0; transform: translateX(50%); }
 
-#dlg { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background: var(--backdrop); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 16px; }
+.muted { margin: 0; font-size: 13px; color: var(--muted); }
+.wrap-row { flex-wrap: wrap; gap: 8px; }
+.file-btn { cursor: pointer; } .file-btn input { display: none; }
+.mono-box { font-family: var(--font-mono); font-size: 12px; resize: vertical; min-height: 120px; line-height: 1.4; }
+.overlay { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background: var(--backdrop); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 16px; }
 .panel { width: 100%; max-width: 28rem; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,.18); padding: 20px; display: flex; flex-direction: column; gap: 16px; max-height: 100%; overflow: auto; }
 .panel-head { display: flex; align-items: center; justify-content: space-between; }
 .panel h2 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
@@ -175,7 +179,10 @@ svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width:
 <header>
   <div class="wrap brand">
     <b>Timeline</b>
-    <span id="status" aria-live="polite">Carregando eventos…</span>
+    <div class="row" style="gap:12px">
+      <span id="status" aria-live="polite">Carregando eventos…</span>
+      <button type="button" class="btn-icon" id="cfgBtn" aria-label="Configurações"><svg viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg></button>
+    </div>
   </div>
 </header>
 
@@ -233,7 +240,32 @@ svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width:
   </div>
 </main>
 
-<div id="dlg" hidden role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+<div id="cfg" class="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="cfg-title">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 id="cfg-title">Configurações</h2>
+      <button type="button" class="btn-icon" id="cfgClose" aria-label="Fechar"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <p class="muted" id="storageInfo"></p>
+    <div class="row wrap-row">
+      <button type="button" class="btn-secondary" id="expBtn"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg> Exportar JSON</button>
+      <label class="btn-secondary file-btn"><svg viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5M4 21h16"/></svg> Importar arquivo<input type="file" id="impFile" accept=".json,application/json"></label>
+    </div>
+    <label class="field"><span>JSON dos eventos (copie daqui ou cole aqui para importar)</span><textarea class="input mono-box" id="jsonBox" rows="7" spellcheck="false"></textarea></label>
+    <div class="actions">
+      <button type="button" class="btn-ghost" id="copyBtn">Copiar</button>
+      <button type="button" class="btn-primary needs-write" id="impTextBtn">Importar do texto</button>
+    </div>
+    <div class="row wrap-row" id="impConfirm" hidden>
+      <span class="muted" id="impMsg"></span>
+      <button type="button" class="btn-danger" id="impYes">Substituir</button>
+      <button type="button" class="btn-ghost" id="impNo">Cancelar</button>
+    </div>
+    <span class="muted" id="cfgMsg"></span>
+  </div>
+</div>
+
+<div id="dlg" class="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="dlg-title">
   <form class="panel" id="form" novalidate>
     <div class="panel-head">
       <h2 id="dlg-title">Editar evento</h2>
@@ -663,13 +695,27 @@ svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width:
     persist(it); closeEditor(); setView(view[0], view[1]);
   });
 
-  // ---- persistência ----
+  // ---- persistência: banco do artefato quando existe, senão o armazenamento deste navegador ----
   const queue = new Map();
   const enqueue = (id, fn) => { const p = (queue.get(id) || Promise.resolve()).then(fn, fn); queue.set(id, p); return p; };
   function setStatus(t) { statusEl.textContent = t; }
   function readOnly() { canWrite = false; document.documentElement.dataset.ro = '1'; setStatus('Somente leitura'); }
+  const LS_KEY = 'tempo.events.v1';
+  let storage = 'none'; // 'db' | 'local' | 'none'
+  const toDate = (v) => { if (typeof v === 'number') return v; if (typeof v === 'string') { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v); if (m) return new Date(+m[1], +m[2] - 1, +m[3]).getTime(); const n = Number(v); if (Number.isFinite(n)) return n; } return NaN; };
+  function normalize(id, d) {
+    return { id: String(id), label: String(d.label == null ? '' : d.label), lane: Math.max(0, Math.round(Number(d.lane) || 0)), start: toDate(d.start), end: toDate(d.end), color: ((Math.round(Number(d.color)) || 0) % PALETTE + PALETTE) % PALETTE };
+  }
+  const valid = (i) => Number.isFinite(i.start) && Number.isFinite(i.end) && i.end > i.start && i.id;
+  const serialize = (i) => ({ id: i.id, label: i.label, lane: i.lane, start: toInput(i.start), end: toInput(i.end), color: i.color });
+  function loadLocal() {
+    try { const arr = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); return Array.isArray(arr) ? arr.map((d) => normalize(d.id || newId(), d)).filter(valid) : []; } catch (_) { return []; }
+  }
+  function saveLocal() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(items.map(serialize))); setStatus(''); } catch (_) { setStatus('Não foi possível salvar neste navegador.'); }
+  }
   function persist(it) {
-    if (!db) return;
+    if (!db) { saveLocal(); return; }
     const body = { label: it.label, lane: it.lane, start: it.start, end: it.end, color: it.color };
     enqueue(it.id, () => db.collection('events').doc(it.id).set(body)).catch((err) => {
       if (err && err.code === 'invalid_argument') readOnly(); else setStatus('Não foi possível salvar. Tente de novo.');
@@ -677,17 +723,86 @@ svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width:
   }
   function remove(id) {
     items = items.filter((i) => i.id !== id); setView(view[0], view[1]);
-    if (!db) return;
+    if (!db) { saveLocal(); return; }
     enqueue(id, () => db.collection('events').doc(id).delete()).catch(() => setStatus('Não foi possível excluir. Tente de novo.'));
   }
   function applySnap(snap) {
-    items = snap.docs.map((dc) => {
-      const d = dc.data() || {};
-      return { id: dc.id, label: String(d.label == null ? '' : d.label), lane: Math.max(0, Number(d.lane) || 0), start: Number(d.start) || 0, end: Number(d.end) || 0, color: ((Number(d.color) || 0) % PALETTE + PALETTE) % PALETTE };
-    }).filter((i) => i.end > i.start);
+    items = snap.docs.map((dc) => normalize(dc.id, dc.data() || {})).filter(valid);
     if (!loaded) { loaded = true; view = domain(); } else view = clampView(view[0], view[1], domain());
     render();
   }
+
+  // ---- configurações: exportar / importar ----
+  const cfg = $('#cfg'), jsonBox = $('#jsonBox'), cfgMsg = $('#cfgMsg'), impConfirm = $('#impConfirm'), impMsg = $('#impMsg');
+  let pendingImport = null;
+  const exportText = () => JSON.stringify({ app: 'tempo', version: 1, exportedAt: new Date().toISOString(), events: items.map(serialize) }, null, 2);
+  function openCfg() {
+    $('#storageInfo').textContent = storage === 'db' ? 'Os eventos ficam salvos na sua conta, com o artefato. Exporte para ter uma cópia ou levar para outro lugar.'
+      : storage === 'local' ? 'Os eventos ficam salvos só neste navegador, neste aparelho. Exporte de tempos em tempos para não perder, e importe em outro navegador para continuar.'
+      : 'Sem lugar para salvar: as alterações somem ao recarregar. Exporte antes de sair.';
+    jsonBox.value = exportText(); cfgMsg.textContent = ''; impConfirm.hidden = true; pendingImport = null; cfg.hidden = false;
+  }
+  function closeCfg() { cfg.hidden = true; }
+  $('#cfgBtn').addEventListener('click', openCfg);
+  $('#cfgClose').addEventListener('click', closeCfg);
+  cfg.addEventListener('pointerdown', (e) => { if (e.target === cfg) closeCfg(); });
+  $('#copyBtn').addEventListener('click', async () => {
+    jsonBox.value = exportText();
+    try { await navigator.clipboard.writeText(jsonBox.value); cfgMsg.textContent = 'Copiado.'; }
+    catch (_) { jsonBox.focus(); jsonBox.select(); cfgMsg.textContent = 'Texto selecionado: use Cmd+C ou Ctrl+C para copiar.'; }
+  });
+  $('#expBtn').addEventListener('click', async () => {
+    const text = exportText(), name = 'timeline-' + toInput(Date.now()) + '.json';
+    jsonBox.value = text;
+    let dl = null;
+    try { dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (_) { dl = null; }
+    if (dl) {
+      try { await dl.save({ filename: name, data: text }); cfgMsg.textContent = 'Arquivo salvo.'; }
+      catch (err) { cfgMsg.textContent = err && err.code === 'cancelled' ? 'Download cancelado.' : 'Não deu para baixar aqui. Use "Copiar".'; }
+      return;
+    }
+    try {
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' })); a.download = name;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+      cfgMsg.textContent = 'Download iniciado. Se nada aconteceu, use "Copiar".';
+    } catch (_) { cfgMsg.textContent = 'Não deu para baixar aqui. Use "Copiar".'; }
+  });
+  function parseImport(text) {
+    let data; try { data = JSON.parse(text); } catch (_) { throw new Error('O texto não é um JSON válido.'); }
+    const arr = Array.isArray(data) ? data : data && Array.isArray(data.events) ? data.events : null;
+    if (!arr) throw new Error('Esperava um objeto com "events" ou uma lista de eventos.');
+    const seen = new Set();
+    const out = arr.map((d, i) => normalize(d && d.id ? d.id : 'imp' + i + '-' + newId(), d || {})).filter((it) => { if (!valid(it) || seen.has(it.id)) return false; seen.add(it.id); return true; });
+    if (!out.length && arr.length) throw new Error('Nenhum evento válido: cada um precisa de label, start e end (AAAA-MM-DD), com fim depois do início.');
+    return out;
+  }
+  function askImport(text) {
+    try {
+      const evs = parseImport(text);
+      pendingImport = evs;
+      impMsg.textContent = 'Substituir os ' + items.length + ' eventos atuais por ' + evs.length + ' importados?';
+      impConfirm.hidden = false; cfgMsg.textContent = '';
+    } catch (err) { impConfirm.hidden = true; cfgMsg.textContent = err.message; }
+  }
+  $('#impTextBtn').addEventListener('click', () => askImport(jsonBox.value));
+  $('#impFile').addEventListener('change', (e) => {
+    const f = e.target.files && e.target.files[0]; if (!f) return;
+    const rd = new FileReader(); rd.onload = () => { jsonBox.value = String(rd.result || ''); askImport(jsonBox.value); }; rd.readAsText(f); e.target.value = '';
+  });
+  $('#impNo').addEventListener('click', () => { impConfirm.hidden = true; pendingImport = null; });
+  $('#impYes').addEventListener('click', () => {
+    if (!pendingImport) return;
+    const oldIds = items.map((i) => i.id), evs = pendingImport; pendingImport = null; impConfirm.hidden = true;
+    items = evs; view = domain(); render();
+    if (db) {
+      const keep = new Set(evs.map((i) => i.id));
+      for (const it of evs) persist(it);
+      for (const id of oldIds) if (!keep.has(id)) enqueue(id, () => db.collection('events').doc(id).delete()).catch(() => setStatus('Não foi possível excluir um evento antigo.'));
+    } else saveLocal();
+    cfgMsg.textContent = evs.length === 1 ? '1 evento importado.' : evs.length + ' eventos importados.';
+    jsonBox.value = exportText();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !cfg.hidden) closeCfg(); });
 
   // ---- medidas ----
   let lastH = 0;
@@ -704,14 +819,17 @@ svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width:
 
   render();
 
+  function useLocal() {
+    storage = 'local'; items = loadLocal(); loaded = true; view = domain(); setStatus(''); render();
+  }
   (async () => {
     const C = window.claude;
-    if (!C || typeof C.use !== 'function') { loaded = true; setStatus('Sem conexão com o banco: as alterações ficam só nesta aba.'); render(); return; }
+    if (!C || typeof C.use !== 'function') { useLocal(); return; }
     let store = null, user = null;
     try { [store, user] = await Promise.all([C.use('db'), C.use('user')]); } catch (_) { /* fica offline */ }
     if (user) { try { if ((await user.can('data.write')) === false) readOnly(); } catch (_) { /* segue como escrita permitida */ } }
-    if (!store) { loaded = true; setStatus('Sem conexão com o banco: as alterações ficam só nesta aba.'); render(); return; }
-    db = store;
+    if (!store) { useLocal(); return; }
+    db = store; storage = 'db';
     db.collection('events').onSnapshot((snap) => {
       if (draggingId) { pendingSnap = snap; return; }
       applySnap(snap);
