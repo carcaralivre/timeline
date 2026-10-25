@@ -1,0 +1,722 @@
+<title>Tempo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: cabeçalho fino, barra de controles, superfície principal com faixas, minimapa embaixo. Uma coluna, máx. 1200px. */
+:root {
+  --bg: #FAF8F4; --fg: #1A1917;
+  --surface: #F5F2EC; --raised: #EFEBE3; --sunken: #FDFCFA;
+  --muted: #6B6760; --border: #E5E0D5; --border-strong: #CFC9BC;
+  --primary: #2D2D2B; --primary-fg: #FAF8F4;
+  --danger: #A03030; --danger-bg: #FDF0F0;
+  --placeholder: #A09A91;
+  --shadow: 0 1px 2px rgba(26,25,23,.05);
+  --backdrop: rgba(26,25,23,.35);
+  --ev-text: #1A1917;
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ev-0: oklch(0.88 0.07 10);  --ev-1: oklch(0.79 0.09 28);  --ev-2: oklch(0.88 0.07 46);  --ev-3: oklch(0.79 0.09 64);
+  --ev-4: oklch(0.88 0.07 82);  --ev-5: oklch(0.79 0.09 100); --ev-6: oklch(0.88 0.07 118); --ev-7: oklch(0.79 0.09 136);
+  --ev-8: oklch(0.88 0.07 154); --ev-9: oklch(0.79 0.09 172); --ev-10: oklch(0.88 0.07 190); --ev-11: oklch(0.79 0.09 208);
+  --ev-12: oklch(0.88 0.07 226); --ev-13: oklch(0.79 0.09 244); --ev-14: oklch(0.88 0.07 262); --ev-15: oklch(0.79 0.09 280);
+  --ev-16: oklch(0.88 0.07 298); --ev-17: oklch(0.79 0.09 316); --ev-18: oklch(0.88 0.07 334); --ev-19: oklch(0.79 0.09 352);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #191816; --fg: #EDE9E1;
+    --surface: #1F1E1B; --raised: #2A2825; --sunken: #151412;
+    --muted: #9A948A; --border: #2E2C28; --border-strong: #46433D;
+    --primary: #EDE9E1; --primary-fg: #191816;
+    --danger: #E38A8A; --danger-bg: #3A2222;
+    --placeholder: #6E6961;
+    --shadow: 0 1px 2px rgba(0,0,0,.4);
+    --backdrop: rgba(0,0,0,.55);
+    --ev-text: #F3EFE8;
+    --ev-0: oklch(0.42 0.07 10);  --ev-1: oklch(0.38 0.09 28);  --ev-2: oklch(0.42 0.07 46);  --ev-3: oklch(0.38 0.09 64);
+    --ev-4: oklch(0.42 0.07 82);  --ev-5: oklch(0.38 0.09 100); --ev-6: oklch(0.42 0.07 118); --ev-7: oklch(0.38 0.09 136);
+    --ev-8: oklch(0.42 0.07 154); --ev-9: oklch(0.38 0.09 172); --ev-10: oklch(0.42 0.07 190); --ev-11: oklch(0.38 0.09 208);
+    --ev-12: oklch(0.42 0.07 226); --ev-13: oklch(0.38 0.09 244); --ev-14: oklch(0.42 0.07 262); --ev-15: oklch(0.38 0.09 280);
+    --ev-16: oklch(0.42 0.07 298); --ev-17: oklch(0.38 0.09 316); --ev-18: oklch(0.42 0.07 334); --ev-19: oklch(0.38 0.09 352);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #191816; --fg: #EDE9E1;
+  --surface: #1F1E1B; --raised: #2A2825; --sunken: #151412;
+  --muted: #9A948A; --border: #2E2C28; --border-strong: #46433D;
+  --primary: #EDE9E1; --primary-fg: #191816;
+  --danger: #E38A8A; --danger-bg: #3A2222;
+  --placeholder: #6E6961;
+  --shadow: 0 1px 2px rgba(0,0,0,.4);
+  --backdrop: rgba(0,0,0,.55);
+  --ev-text: #F3EFE8;
+  --ev-0: oklch(0.42 0.07 10);  --ev-1: oklch(0.38 0.09 28);  --ev-2: oklch(0.42 0.07 46);  --ev-3: oklch(0.38 0.09 64);
+  --ev-4: oklch(0.42 0.07 82);  --ev-5: oklch(0.38 0.09 100); --ev-6: oklch(0.42 0.07 118); --ev-7: oklch(0.38 0.09 136);
+  --ev-8: oklch(0.42 0.07 154); --ev-9: oklch(0.38 0.09 172); --ev-10: oklch(0.42 0.07 190); --ev-11: oklch(0.38 0.09 208);
+  --ev-12: oklch(0.42 0.07 226); --ev-13: oklch(0.38 0.09 244); --ev-14: oklch(0.42 0.07 262); --ev-15: oklch(0.38 0.09 280);
+  --ev-16: oklch(0.42 0.07 298); --ev-17: oklch(0.38 0.09 316); --ev-18: oklch(0.42 0.07 334); --ev-19: oklch(0.38 0.09 352);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-sans); font-size: 14px; line-height: 1.45; -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; }
+main { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.track-wrap { flex: 1; min-height: 160px; display: flex; flex-direction: column; }
+#track { flex: 1; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+header { border-bottom: 1px solid var(--border); }
+.wrap { max-width: 1200px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.brand { display: flex; align-items: center; justify-content: space-between; height: 56px; }
+.brand b { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+#status { font-size: 12px; color: var(--muted); text-align: right; min-width: 0; }
+main .wrap { padding-block: 20px 16px; display: flex; flex-direction: column; gap: 16px; flex: 1; width: 100%; min-height: 0; }
+
+.bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; }
+.win-info { display: flex; flex-direction: column; flex: 0 0 auto; min-width: 8rem; white-space: nowrap; line-height: 1.4; }
+.win-info .mono { font-size: 13px; }
+.win-info .dates { display: inline-flex; align-items: baseline; }
+.win-info .dates > span { display: inline-block; width: 7ch; }
+.win-info .dates .dash { width: auto; padding: 0 .5ch; color: var(--muted); }
+.win-info small { font-size: 13px; color: var(--muted); }
+.controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px 12px; flex: 1 1 auto; min-width: 0; }
+.presets { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; }
+.left { display: flex; align-items: center; gap: 16px; flex: 0 0 auto; }
+.nav { display: inline-flex; align-items: center; gap: 4px; }
+.sep { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+.btn-ghost { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 8px 12px; border-radius: 8px; font-size: 14px; color: var(--muted); transition: background-color .1s, color .1s; }
+.btn-ghost:hover { background: var(--raised); color: var(--fg); }
+.btn-icon { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border-strong); color: var(--fg); transition: background-color .1s; }
+.btn-icon:hover { background: var(--raised); }
+.btn-primary { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; background: var(--primary); color: var(--primary-fg); transition: opacity .1s; }
+.btn-primary:hover { opacity: .9; }
+.btn-primary:disabled { opacity: .4; cursor: default; }
+.btn-secondary { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 8px 16px; border-radius: 8px; font-size: 14px; border: 1px solid var(--border-strong); }
+.btn-secondary:hover { background: var(--raised); }
+.btn-danger { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; background: var(--danger-bg); color: var(--danger); border: 1px solid transparent; transition: border-color .1s; }
+.btn-danger:hover { border-color: var(--danger); }
+.ml { margin-left: 8px; }
+@media (max-width: 639px) { .btn-ghost { min-height: 44px; } .btn-icon { width: 44px; height: 44px; } }
+svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+:root[data-ro="1"] .needs-write { display: none !important; }
+
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
+#track { position: relative; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; min-height: 160px; }
+#track:active { cursor: grabbing; }
+.tick { position: absolute; top: 0; bottom: 0; width: 1px; background: color-mix(in oklab, var(--border) 70%, transparent); pointer-events: none; }
+.tick span { position: absolute; top: 13px; left: 8px; font-family: var(--font-mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
+#rulerLine { position: absolute; left: 0; right: 0; top: 40px; height: 1px; background: var(--border); pointer-events: none; }
+.tick.edge { background: transparent; } /* coincide com a borda do contêiner: só o rótulo */
+.tick.snap { background: color-mix(in oklab, var(--fg) 35%, transparent); z-index: 11; }
+.tick.snap span { color: var(--fg); }
+#tip { position: absolute; z-index: 20; pointer-events: none; padding: 4px 8px; border-radius: 6px; background: var(--fg); color: var(--bg); font-family: var(--font-mono); font-size: 12px; line-height: 1.3; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+#tip b { font-family: var(--font-sans); font-weight: 500; }
+#guide { position: absolute; top: 44px; bottom: 0; width: 0; border-left: 1px dashed color-mix(in oklab, var(--fg) 45%, transparent); pointer-events: none; z-index: 11; }
+#now { position: absolute; top: 40px; bottom: 0; width: 1px; background: color-mix(in oklab, var(--muted) 55%, transparent); pointer-events: none; z-index: 2; }
+#now span { position: absolute; top: -7px; left: 0; transform: translateX(-50%); padding: 0 4px; border-radius: 4px; background: var(--surface); font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); line-height: 14px; }
+#empty { position: absolute; inset: 56px 16px 16px; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--muted); font-size: 13px; pointer-events: none; z-index: 3; }
+.item { position: absolute; height: 44px; padding: 0; border: 1px solid color-mix(in oklab, var(--fg) 12%, transparent); border-radius: 8px; touch-action: none; font-size: 13px; font-weight: 500; letter-spacing: .03em; text-transform: uppercase; color: var(--ev-text); cursor: grab; transition: border-color .1s; z-index: 1; }
+.item:hover { border-color: var(--fg); }
+.item[data-dragging="true"] { cursor: grabbing; border-color: var(--fg); opacity: .9; z-index: 10; }
+.lane-line { position: absolute; left: 0; right: 0; height: 1px; background: color-mix(in oklab, var(--border) 60%, transparent); pointer-events: none; }
+#laneHover { position: absolute; left: 0; right: 0; height: 52px; background: color-mix(in oklab, var(--fg) 4%, transparent); pointer-events: none; }
+#laneAdd { position: absolute; left: 8px; width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid var(--border-strong); background: var(--bg); color: var(--fg); box-shadow: var(--shadow); z-index: 5; cursor: pointer; touch-action: none; }
+#laneAdd:hover { background: var(--raised); border-color: var(--fg); }
+.btn-ghost[data-active="true"] { background: var(--raised); color: var(--fg); }
+.item > span { position: absolute; top: 0; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 0 8px; white-space: nowrap; }
+.item > span .emo { font-size: 1.35em; line-height: 1; letter-spacing: 0; margin: 0 2px; }
+.item .h { position: absolute; top: 0; bottom: 0; width: 10px; cursor: ew-resize; z-index: 2; touch-action: none; }
+.item .h-l { left: 0; } .item .h-r { right: 0; }
+.item:hover .h::after, .item[data-resizing] .h::after { content: ""; position: absolute; top: 12px; bottom: 12px; width: 2px; border-radius: 2px; background: color-mix(in oklab, var(--fg) 40%, transparent); }
+.item .h-l::after { left: 3px; } .item .h-r::after { right: 3px; }
+.item[data-narrow="true"] .h { display: none; }
+:root[data-ro="1"] .item { cursor: pointer; }
+
+#mini { position: relative; height: 80px; touch-action: none; user-select: none; -webkit-user-select: none; overflow: visible; }
+#mini .shade:first-of-type { border-radius: 11px 0 0 11px; }
+#mini .shade:last-of-type { border-radius: 0 11px 11px 0; }
+#win[data-edge-l="true"] { border-top-left-radius: 11px; border-bottom-left-radius: 11px; }
+#win[data-edge-r="true"] { border-top-right-radius: 11px; border-bottom-right-radius: 11px; }
+#miniTicks span { position: absolute; bottom: 4px; font-family: var(--font-mono); font-size: 11px; color: var(--muted); pointer-events: none; }
+#miniBars div { position: absolute; height: 4px; border-radius: 999px; pointer-events: none; }
+.shade { position: absolute; top: 0; bottom: 0; background: color-mix(in oklab, var(--fg) 7%, transparent); pointer-events: none; }
+#win { position: absolute; top: 0; bottom: 0; border: 1px solid color-mix(in oklab, var(--fg) 40%, transparent); border-radius: 6px; cursor: grab; }
+#win:active { cursor: grabbing; }
+.handle { position: absolute; top: 50%; margin-top: -16px; width: 12px; height: 32px; background: var(--surface); border: 1px solid color-mix(in oklab, var(--fg) 40%, transparent); border-radius: 4px; cursor: ew-resize; }
+.handle:hover, #win:hover .handle { border-color: color-mix(in oklab, var(--fg) 70%, transparent); }
+#hl { left: 0; transform: translateX(-50%); }
+#hr { right: 0; transform: translateX(50%); }
+
+#dlg { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background: var(--backdrop); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 16px; }
+.panel { width: 100%; max-width: 28rem; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,.18); padding: 20px; display: flex; flex-direction: column; gap: 16px; max-height: 100%; overflow: auto; }
+.panel-head { display: flex; align-items: center; justify-content: space-between; }
+.panel h2 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field span { font-size: 13px; color: var(--muted); }
+.input { width: 100%; min-height: 40px; padding: 8px 12px; font: inherit; font-size: 14px; color: var(--fg); background: var(--sunken); border: 1px solid var(--border); border-radius: 8px; outline: none; transition: border-color .1s; }
+.input:focus { border-color: var(--primary); }
+.input::placeholder { color: var(--placeholder); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+#err { font-size: 13px; color: var(--danger); }
+#swatches { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; }
+.swatch { width: 100%; aspect-ratio: 1; max-width: 100%; border-radius: 999px; border: 1px solid color-mix(in oklab, var(--fg) 12%, transparent); padding: 0; transition: border-color .1s; }
+.swatch:hover { border-color: var(--fg); }
+.swatch[data-active="true"] { outline: 2px solid var(--fg); outline-offset: 2px; }
+.actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+.row { display: inline-flex; align-items: center; gap: 4px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header>
+  <div class="wrap brand">
+    <b>Timeline</b>
+    <span id="status" aria-live="polite">Carregando eventos…</span>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="bar">
+      <div class="left">
+        <div class="win-info">
+          <span class="mono dates"><span id="rangeStart">—</span><span class="dash">–</span><span id="rangeEnd">—</span></span>
+          <small id="size">Janela</small>
+        </div>
+        <div class="nav">
+          <button class="btn-icon" id="prev" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <button class="btn-icon" id="next" aria-label="Avançar"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+      <div class="controls" role="toolbar" aria-label="Zoom e navegação">
+        <div class="presets">
+          <button class="btn-ghost" data-preset="w1">Semana</button>
+          <button class="btn-ghost" data-preset="m1">Mês</button>
+          <button class="btn-ghost" data-preset="m3">Trimestre</button>
+          <button class="btn-ghost" data-preset="m6">Semestre</button>
+          <button class="btn-ghost" data-preset="y1">Ano</button>
+          <button class="btn-ghost" data-preset="y2">2 anos</button>
+          <button class="btn-ghost" data-preset="y5">5 anos</button>
+          <button class="btn-ghost" data-preset="y10">10 anos</button>
+          <button class="btn-ghost" data-preset="all" data-active="true">Tudo</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="surface" id="mini">
+      <div id="miniTicks"></div>
+      <div id="miniBars"></div>
+      <div class="shade" id="shadeL"></div>
+      <div class="shade" id="shadeR"></div>
+      <div id="win"><div class="handle" id="hl"></div><div class="handle" id="hr"></div></div>
+    </div>
+
+    <div class="surface track-wrap">
+      <div id="track">
+        <div id="ticks"></div>
+        <div id="rulerLine"></div>
+        <div id="lanes"></div>
+        <div id="laneHover" hidden></div>
+        <div id="now" hidden><span>Hoje</span></div>
+        <div id="guide" hidden></div>
+        <div id="items"></div>
+        <div id="tip" hidden></div>
+        <button type="button" id="laneAdd" class="needs-write" hidden aria-label="Adicionar evento nesta linha"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+        <div id="empty" hidden>Nenhum evento ainda. Passe o mouse pela linha e clique em + para criar o primeiro período.</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<div id="dlg" hidden role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+  <form class="panel" id="form" novalidate>
+    <div class="panel-head">
+      <h2 id="dlg-title">Editar evento</h2>
+      <button type="button" class="btn-icon" id="close" aria-label="Fechar"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <label class="field"><span>Nome</span><input class="input" id="f-label" placeholder="Ex.: Mudança para Suíça" autocomplete="off"></label>
+    <div class="two">
+      <label class="field"><span>Início</span><input class="input" type="date" id="f-start"></label>
+      <label class="field"><span>Fim</span><input class="input" type="date" id="f-end"></label>
+    </div>
+    <span id="err" hidden>O fim precisa ser depois do início.</span>
+    <div class="field"><span>Cor</span><div id="swatches"></div></div>
+    <div class="actions">
+      <button type="button" class="btn-danger" id="del"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg> Excluir</button>
+      <div class="row" id="confirm" hidden>
+        <button type="button" class="btn-danger" id="del-yes">Confirmar exclusão</button>
+        <button type="button" class="btn-ghost" id="del-no">Cancelar</button>
+      </div>
+      <button type="submit" class="btn-primary" id="save">Salvar</button>
+    </div>
+  </form>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  const DAY = 86400000, MIN_SPAN = 3 * DAY, LANE_H = 52, RULER_H = 40, TOP = RULER_H + 16, PALETTE = 20;
+  const $ = (s) => document.querySelector(s);
+  const track = $('#track'), ticksEl = $('#ticks'), itemsEl = $('#items'), nowEl = $('#now'), emptyEl = $('#empty');
+  const lanesEl = $('#lanes'), laneHover = $('#laneHover'), laneAdd = $('#laneAdd'), guideEl = $('#guide'), tipEl = $('#tip');
+  let tipId = null; // evento sob o mouse (balão com as datas)
+  const mini = $('#mini'), miniTicksEl = $('#miniTicks'), miniBarsEl = $('#miniBars'), winEl = $('#win'), shadeL = $('#shadeL'), shadeR = $('#shadeR');
+  const rangeStartEl = $('#rangeStart'), rangeEndEl = $('#rangeEnd'), sizeEl = $('#size'), statusEl = $('#status');
+
+  let items = [], view = null, draggingId = null, db = null, canWrite = true, loaded = false, pendingSnap = null;
+  const SNAP_PX = 12; let snapT = null, snapKind = null; // onde o arraste encaixou: 'tick' (régua) ou 'event' (borda de outro evento)
+  let width = track.clientWidth || 1000, miniW = mini.clientWidth || 1000;
+
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const newId = () => (crypto.randomUUID ? crypto.randomUUID() : 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
+  const mk = (y, m = 1, d = 1) => new Date(y, m - 1, d).getTime();
+
+  function domain() {
+    if (!items.length) { const y = new Date().getFullYear(); return [mk(y), mk(y + 1)]; }
+    const s = Math.min(...items.map((i) => i.start)), e = Math.max(...items.map((i) => i.end));
+    return [s, Math.max(e, s + MIN_SPAN)];
+  }
+  function clampView(s, e, dom) {
+    const [ds, de] = dom;
+    if (!Number.isFinite(s) || !Number.isFinite(e)) return view || [ds, de];
+    const span = clamp(e - s, Math.min(MIN_SPAN, de - ds), de - ds);
+    const ns = clamp(s, ds, de - span);
+    return [ns, ns + span];
+  }
+  function setView(s, e) { view = clampView(s, e, domain()); render(); }
+
+  // ---- escalas de tempo (ticks) ----
+  const fmt = (o) => new Intl.DateTimeFormat('pt-BR', o);
+  const fDay = fmt({ day: 'numeric', month: 'short' }), fWeekday = fmt({ weekday: 'short', day: 'numeric' });
+  const fMonth = fmt({ month: 'short' }), fRange = fmt({ day: 'numeric', month: 'short', year: 'numeric' });
+  const yearUnit = (n) => ({
+    approx: n * 365 * DAY,
+    floor: (t) => { const y = new Date(t).getFullYear(); return new Date(y - (((y % n) + n) % n), 0, 1); },
+    next: (dt) => new Date(dt.getFullYear() + n, 0, 1),
+    label: (dt) => String(dt.getFullYear()),
+  });
+  const monthUnit = (n) => ({
+    approx: n * 30 * DAY,
+    floor: (t) => { const x = new Date(t); return new Date(x.getFullYear(), x.getMonth() - (x.getMonth() % n), 1); },
+    next: (dt) => new Date(dt.getFullYear(), dt.getMonth() + n, 1),
+    label: (dt) => (dt.getMonth() === 0 ? String(dt.getFullYear()) : fMonth.format(dt).replace('.', '')),
+  });
+  const UNITS = [
+    { approx: DAY, floor: (t) => { const x = new Date(t); return new Date(x.getFullYear(), x.getMonth(), x.getDate()); },
+      next: (dt) => new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + 1), label: (dt) => fWeekday.format(dt).replace('.', '') },
+    { approx: 7 * DAY, floor: (t) => { const x = new Date(t); const wd = (x.getDay() + 6) % 7; return new Date(x.getFullYear(), x.getMonth(), x.getDate() - wd); },
+      next: (dt) => new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + 7), label: (dt) => fDay.format(dt).replace('.', '') },
+    monthUnit(1), monthUnit(3), yearUnit(1), yearUnit(5), yearUnit(10),
+  ];
+  function getTicks(start, end, w, minPx = 72) {
+    const msPerPx = (end - start) / Math.max(w, 1);
+    const unit = UNITS.find((u) => u.approx / msPerPx >= minPx) || UNITS[UNITS.length - 1];
+    const out = []; let dt = unit.floor(start), guard = 0;
+    while (dt.getTime() <= end && guard++ < 500) {
+      if (dt.getTime() >= start) out.push({ t: dt.getTime(), label: unit.label(dt) });
+      dt = unit.next(dt);
+    }
+    return out;
+  }
+  const MESES = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+  const fCompact = (t) => { const d = new Date(t); return d.getDate() + MESES[d.getMonth()] + String(d.getFullYear() % 100).padStart(2, '0'); };
+  function describeSpan(start, end) {
+    const days = (end - start) / DAY; let size;
+    if (days < 14) size = Math.round(days) + ' dias';
+    else if (days < 60) size = Math.round(days / 7) + ' semanas';
+    else if (days < 730) size = Math.round(days / 30) + ' meses';
+    else size = Math.round(days / 365) + ' anos';
+    return { from: fCompact(start), to: fCompact(end), size };
+  }
+  const toInput = (t) => { const x = new Date(t), p = (n) => String(n).padStart(2, '0'); return x.getFullYear() + '-' + p(x.getMonth() + 1) + '-' + p(x.getDate()); };
+  const fromInput = (v) => { const [y, m, d] = v.split('-').map(Number); return new Date(y || 2025, (m || 1) - 1, d || 1).getTime(); };
+
+  // ---- render ----
+  const EMOJI = /(\p{Extended_Pictographic}(?:️|‍\p{Extended_Pictographic}|\p{Emoji_Modifier})*|\p{Regional_Indicator}{2})/gu;
+  const measure = (() => { const c = document.createElement('canvas').getContext('2d'); return (t) => { c.font = '500 13px "Geist", system-ui, sans-serif'; const emo = (t.match(EMOJI) || []).length; return c.measureText(t.toUpperCase()).width + t.length * 0.4 + emo * 10 + 20; }; })();
+  // emojis ficam um pouco maiores que o texto do rótulo
+  function fillLabel(el, text) {
+    el.textContent = '';
+    const parts = text.split(EMOJI);
+    for (const p of parts) {
+      if (!p) continue;
+      if (EMOJI.test(p)) { const s = document.createElement('span'); s.className = 'emo'; s.textContent = p; el.appendChild(s); }
+      else el.appendChild(document.createTextNode(p));
+      EMOJI.lastIndex = 0;
+    }
+  }
+  const els = new Map();
+  function render() {
+    if (!view) view = domain();
+    const [s, e] = view, span = e - s, x = (t) => ((t - s) / span) * width;
+    const lanes = laneCount();
+    track.style.minHeight = (TOP + lanes * LANE_H + 8) + 'px';
+    ticksEl.innerHTML = getTicks(s, e, width).map((t) => { const px = x(t.t); return '<div class="tick' + (t.t === snapT ? ' snap' : '') + (px < 1.5 || px > width - 1.5 ? ' edge' : '') + '" style="left:' + px + 'px"><span>' + t.label + '</span></div>'; }).join('');
+    let lines = '';
+    const nLines = Math.max(laneCount(), Math.ceil((track.clientHeight - TOP + 4) / LANE_H));
+    for (let i = 1; i < nLines; i++) lines += '<div class="lane-line" style="top:' + (TOP - 4 + i * LANE_H) + 'px"></div>';
+    lanesEl.innerHTML = lines;
+    const overlaps = new Set();
+    for (let a = 0; a < items.length; a++) for (let b = a + 1; b < items.length; b++) {
+      const p = items[a], q = items[b];
+      if (p.lane === q.lane && p.start < q.end && q.start < p.end) { overlaps.add(p.id); overlaps.add(q.id); }
+    }
+    const now = Date.now();
+    if (now > s && now < e) { nowEl.hidden = false; nowEl.style.left = x(now) + 'px'; } else nowEl.hidden = true;
+    if (snapKind === 'event' && snapT != null) { guideEl.hidden = false; guideEl.style.left = x(snapT) + 'px'; } else guideEl.hidden = true;
+
+    const seen = new Set();
+    for (const it of items) {
+      seen.add(it.id);
+      let el = els.get(it.id);
+      if (!el) { el = makeItem(it.id); els.set(it.id, el); itemsEl.appendChild(el); }
+      const l = x(it.start), r = x(it.end);
+      if (r < 0 || l > width) { el.hidden = true; continue; }
+      el.hidden = false;
+      el.style.left = (l + 2) + 'px'; el.style.width = Math.max(r - l - 4, 4) + 'px';
+      el.dataset.narrow = String(r - l - 4 < 32);
+      el.style.top = (TOP + it.lane * LANE_H) + 'px';
+      const ov = overlaps.has(it.id);
+      el.style.background = ov ? 'color-mix(in oklab, var(--ev-' + it.color + ') 50%, transparent)' : 'var(--ev-' + it.color + ')';
+      el.setAttribute('aria-label', it.label || 'Evento'); el.dataset.dragging = String(draggingId === it.id);
+      el.dataset.overlap = String(ov);
+      const vl = Math.max(l, 0), vr = Math.min(r, width), lab = el.firstChild;
+      if (vr - vl - 4 >= measure(it.label)) { lab.hidden = false; if (lab.dataset.text !== it.label) { fillLabel(lab, it.label); lab.dataset.text = it.label; } lab.style.left = (vl - l) + 'px'; lab.style.width = (vr - vl - 4) + 'px'; }
+      else lab.hidden = true;
+    }
+    for (const [id, el] of els) if (!seen.has(id)) { el.remove(); els.delete(id); }
+
+    const { from, to, size } = describeSpan(s, e);
+    rangeStartEl.textContent = from; rangeEndEl.textContent = to; sizeEl.textContent = 'Janela de ' + size;
+
+    const [ds, de] = domain(), dspan = de - ds, mx = (t) => ((t - ds) / dspan) * miniW;
+    miniTicksEl.innerHTML = getTicks(ds, de, miniW, 56).filter((t) => mx(t.t) + 4 + t.label.length * 7 <= miniW - 4).map((t) => '<span style="left:' + (mx(t.t) + 4) + 'px">' + t.label + '</span>').join('');
+    miniBarsEl.innerHTML = items.map((it) => '<div style="left:' + (mx(it.start) + 1) + 'px;width:' + Math.max(mx(it.end) - mx(it.start) - 2, 1) + 'px;top:' + (8 + Math.min(it.lane, 8) * 6) + 'px;background:var(--ev-' + it.color + ')"></div>').join('');
+    const wl = mx(s), ww = Math.max(mx(e) - mx(s), 8);
+    winEl.style.left = wl + 'px'; winEl.style.width = ww + 'px';
+    winEl.dataset.edgeL = String(wl <= 0.5); winEl.dataset.edgeR = String(wl + ww >= miniW - 0.5);
+    shadeL.style.left = '0'; shadeL.style.width = Math.max(wl, 0) + 'px';
+    shadeR.style.left = (wl + ww) + 'px'; shadeR.style.width = Math.max(miniW - wl - ww, 0) + 'px';
+    emptyEl.hidden = !(loaded && items.length === 0);
+    if (hoverLane >= 0) positionAdd();
+    showTip();
+  }
+  // balão com início, fim e duração do evento sob o mouse; acompanha arraste e redimensionamento
+  function showTip() {
+    const it = tipId && items.find((i) => i.id === tipId), el = it && els.get(it.id);
+    if (!it || !el || el.hidden) { tipEl.hidden = true; return; }
+    const { size } = describeSpan(it.start, it.end);
+    tipEl.innerHTML = '';
+    if (el.firstChild.hidden) { const b = document.createElement('b'); b.textContent = it.label + ' · '; tipEl.appendChild(b); }
+    tipEl.appendChild(document.createTextNode(fCompact(it.start) + ' – ' + fCompact(it.end) + ' · ' + size));
+    tipEl.hidden = false;
+    const l = parseFloat(el.style.left), w = parseFloat(el.style.width), top = parseFloat(el.style.top);
+    const vl = Math.max(l, 0), vr = Math.min(l + w, width), tw = tipEl.offsetWidth, th = tipEl.offsetHeight;
+    tipEl.style.left = clamp((vl + vr) / 2 - tw / 2, 4, Math.max(width - tw - 4, 4)) + 'px';
+    tipEl.style.top = (it.lane === 0 ? top + 44 + 6 : top - th - 6) + 'px';
+  }
+
+  // ---- itens: arrastar (horizontal = datas, vertical = linha); clique = editar ----
+  let idrag = null;
+  function makeItem(id) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'item';
+    b.appendChild(document.createElement('span'));
+    const hl = document.createElement('div'); hl.className = 'h h-l'; b.appendChild(hl);
+    const hr = document.createElement('div'); hr.className = 'h h-r'; b.appendChild(hr);
+    b.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { tipId = id; showTip(); } });
+    b.addEventListener('pointerleave', () => { if (!idrag) { tipId = null; showTip(); } });
+    b.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      const it = items.find((i) => i.id === id); if (!it) return;
+      try { b.setPointerCapture(e.pointerId); } catch (_) { /* ponteiro sem captura */ }
+      const mode = e.target === hl ? 'l' : e.target === hr ? 'r' : 'move';
+      idrag = { id, mode, x: e.clientX, y: e.clientY, s: it.start, e: it.end, lane: it.lane, moved: false };
+    });
+    // encaixa um instante na linha da régua ou na borda de outro evento mais próxima (a menos de SNAP_PX); senão arredonda em dias
+    const snapTime = (raw, dur) => {
+      const span = view[1] - view[0], px = (t) => ((t - view[0]) / span) * width;
+      const cands = getTicks(view[0] - span / 2, view[1] + span / 2, width * 2).map((t) => ({ t: t.t, kind: 'tick' }));
+      for (const o of items) if (o.id !== id) { cands.push({ t: o.start, kind: 'event' }); cands.push({ t: o.end, kind: 'event' }); }
+      let best = null, bestD = SNAP_PX;
+      for (const c of cands) {
+        const d1 = Math.abs(px(c.t) - px(raw));
+        if (d1 < bestD) { bestD = d1; best = { v: c.t, t: c.t, kind: c.kind }; }
+        if (dur != null) { const d2 = Math.abs(px(c.t) - px(raw + dur)); if (d2 < bestD) { bestD = d2; best = { v: c.t - dur, t: c.t, kind: c.kind }; } }
+      }
+      snapT = best ? best.t : null; snapKind = best ? best.kind : null;
+      return best ? best.v : Math.round(raw / DAY) * DAY;
+    };
+    b.addEventListener('pointermove', (e) => {
+      const dr = idrag; if (!dr || dr.id !== id || !canWrite) return;
+      const dx = e.clientX - dr.x, dy = e.clientY - dr.y;
+      if (!dr.moved && Math.hypot(dx, dy) < 4) return;
+      if (!dr.moved) { dr.moved = true; draggingId = id; laneAdd.hidden = true; if (dr.mode !== 'move') b.dataset.resizing = dr.mode; }
+      const span = view[1] - view[0], dT = (dx / width) * span;
+      const it = items.find((i) => i.id === id); if (!it) return;
+      if (dr.mode === 'l') {
+        it.start = Math.min(snapTime(dr.s + dT, null), dr.e - DAY);
+      } else if (dr.mode === 'r') {
+        it.end = Math.max(snapTime(dr.e + dT, null), dr.s + DAY);
+      } else {
+        const dur = dr.e - dr.s, ns = snapTime(dr.s + dT, dur);
+        it.start = ns; it.end = ns + dur; it.lane = Math.max(0, dr.lane + Math.round(dy / LANE_H));
+      }
+      render();
+    });
+    const up = () => {
+      const dr = idrag; if (!dr || dr.id !== id) return;
+      idrag = null; draggingId = null; snapT = null; snapKind = null; delete b.dataset.resizing;
+      if (!b.matches(':hover')) { tipId = null; }
+      const it = items.find((i) => i.id === id);
+      if (dr.moved) {
+        if (it) persist(it);
+        if (pendingSnap) { applySnap(pendingSnap); pendingSnap = null; }
+        setView(view[0], view[1]);
+      } else if (it) { tipId = null; showTip(); openEditor(it, false); }
+    };
+    b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
+    return b;
+  }
+
+  // ---- fundo: arrastar = navegar, roda = zoom, dois dedos = pinça ----
+  const ptrs = new Map(); let pan = null, pinch = null;
+  track.addEventListener('pointerdown', (e) => {
+    track.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, e.clientX);
+    if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pinch = { dist: Math.max(Math.abs(a - b), 10), mid: (a + b) / 2, s: view[0], e: view[1] }; pan = null; }
+    else if (ptrs.size === 1) pan = { x: e.clientX, s: view[0], e: view[1] };
+    laneAdd.hidden = true;
+  });
+  track.addEventListener('pointermove', (e) => {
+    if (!ptrs.has(e.pointerId)) return;
+    ptrs.set(e.pointerId, e.clientX);
+    if (pinch && ptrs.size === 2) {
+      const [a, b] = [...ptrs.values()], dist = Math.max(Math.abs(a - b), 10), rect = track.getBoundingClientRect();
+      const sp0 = pinch.e - pinch.s, anchorT = pinch.s + ((pinch.mid - rect.left) / rect.width) * sp0;
+      const nsp = sp0 * (pinch.dist / dist), frac = ((a + b) / 2 - rect.left) / rect.width;
+      setView(anchorT - frac * nsp, anchorT + (1 - frac) * nsp); return;
+    }
+    if (pan) { const dt = ((e.clientX - pan.x) / width) * (pan.e - pan.s); setView(pan.s - dt, pan.e - dt); }
+  });
+  const endPtr = (e) => {
+    ptrs.delete(e.pointerId);
+    if (ptrs.size < 2) pinch = null;
+    if (ptrs.size === 0) pan = null;
+    else if (ptrs.size === 1) pan = { x: [...ptrs.values()][0], s: view[0], e: view[1] };
+  };
+  track.addEventListener('pointerup', endPtr); track.addEventListener('pointercancel', endPtr);
+  function zoomAt(f, px, w) { const [s, e] = view, sp = e - s, aT = s + (px / w) * sp, nsp = sp * f; setView(aT - (px / w) * nsp, aT + (1 - px / w) * nsp); }
+  // roda/trackpad: horizontal navega, vertical dá zoom; o eixo fica travado durante o gesto para não alternar
+  let wheelAxis = null, wheelAt = 0;
+  const onWheel = (e) => {
+    e.preventDefault();
+    const now = performance.now();
+    const ax = Math.abs(e.deltaX), ay = Math.abs(e.deltaY);
+    let axis = ax > ay ? 'x' : 'y';
+    // só um evento forte e claramente dominante define/troca o eixo; os fracos seguem o eixo travado
+    const strong = Math.max(ax, ay) >= 10 && Math.max(ax, ay) >= 2 * Math.min(ax, ay);
+    if (!strong && wheelAxis && now - wheelAt < 160) axis = wheelAxis;
+    if (strong || !wheelAxis || now - wheelAt >= 160) wheelAxis = axis;
+    wheelAt = now;
+    const mult = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 100 : 1, rect = track.getBoundingClientRect(), [s, en] = view;
+    if (!(rect.width > 0)) return;
+    if (axis === 'x' || e.shiftKey) {
+      const dx = (axis === 'x' ? e.deltaX : e.deltaY) * mult, dt = (dx / rect.width) * (en - s);
+      setView(s + dt, en + dt); return;
+    }
+    const px = e.currentTarget === track ? e.clientX - rect.left : rect.width / 2;
+    zoomAt(Math.exp(e.deltaY * mult * 0.002), px, rect.width);
+  };
+  track.addEventListener('wheel', onWheel, { passive: false });
+  mini.addEventListener('wheel', onWheel, { passive: false });
+
+  // ---- minimapa ----
+  let mdrag = null;
+  mini.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('#win')) return;
+    const rect = mini.getBoundingClientRect(), [ds, de] = domain();
+    const t = ds + ((e.clientX - rect.left) / rect.width) * (de - ds), sp = view[1] - view[0];
+    setView(t - sp / 2, t + sp / 2);
+  });
+  const miniDown = (mode) => (e) => { e.stopPropagation(); e.currentTarget.setPointerCapture(e.pointerId); mdrag = { mode, x: e.clientX, s: view[0], e: view[1] }; };
+  winEl.addEventListener('pointerdown', miniDown('move'));
+  $('#hl').addEventListener('pointerdown', miniDown('l'));
+  $('#hr').addEventListener('pointerdown', miniDown('r'));
+  mini.addEventListener('pointermove', (e) => {
+    const m = mdrag; if (!m) return;
+    const [ds, de] = domain(), dt = ((e.clientX - m.x) / miniW) * (de - ds);
+    if (m.mode === 'move') setView(m.s + dt, m.e + dt);
+    else if (m.mode === 'l') setView(Math.min(m.s + dt, m.e - MIN_SPAN), m.e);
+    else setView(m.s, Math.max(m.e + dt, m.s + MIN_SPAN));
+  });
+  mini.addEventListener('pointerup', () => { mdrag = null; });
+  mini.addEventListener('pointercancel', () => { mdrag = null; });
+
+  // ---- linhas: sempre uma vazia abaixo da última preenchida; + ao passar o mouse ----
+  function laneCount() { return (items.length ? Math.max(...items.map((i) => i.lane)) + 1 : 0) + 1; }
+  // linhas visíveis: as usadas + 1, ou mais, até preencher a altura da pista
+  function visibleLanes() { return Math.max(laneCount(), Math.floor((track.clientHeight - TOP + 4) / LANE_H)); }
+  let hoverLane = -1;
+  function showLane(e) {
+    const rect = track.getBoundingClientRect(), y = e.clientY - rect.top, n = visibleLanes();
+    const lane = Math.floor((y - TOP) / LANE_H);
+    if (y < TOP || lane < 0 || lane >= n) { hideLane(); return; }
+    hoverLane = lane;
+    laneHover.hidden = false; laneHover.style.top = (TOP + lane * LANE_H - 4) + 'px';
+    positionAdd();
+  }
+  // o + fica logo depois do último box da linha; some se esse box ultrapassa a borda direita
+  function positionAdd() {
+    const lane = hoverLane;
+    if (lane < 0 || idrag || pan || pinch || !canWrite) { laneAdd.hidden = true; return; }
+    const [s, e] = view, span = e - s, x = (t) => ((t - s) / span) * width;
+    let right = 0;
+    for (const it of items) if (it.lane === lane && it.end > s) right = Math.max(right, x(it.end));
+    if (right > width - 4) { laneAdd.hidden = true; return; }
+    const left = right > 0 ? right + 8 : 8;
+    if (left + 36 > width - 4) { laneAdd.hidden = true; return; }
+    laneAdd.hidden = false;
+    laneAdd.style.left = left + 'px';
+    laneAdd.style.top = (TOP + lane * LANE_H + (LANE_H - 8 - 36) / 2) + 'px';
+  }
+  function hideLane() { hoverLane = -1; laneHover.hidden = true; laneAdd.hidden = true; }
+  track.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') showLane(e); });
+  track.addEventListener('pointerleave', hideLane);
+  laneAdd.addEventListener('pointerdown', (e) => e.stopPropagation());
+  laneAdd.addEventListener('click', () => { if (hoverLane >= 0) openNew(hoverLane); });
+  function openNew(lane) {
+    const [s, e] = view, span = e - s;
+    if (lane == null) lane = laneCount() - 1;
+    openEditor({ id: newId(), label: '', lane, start: Math.round((s + span * 0.1) / DAY) * DAY, end: Math.round((s + span * 0.4) / DAY) * DAY, color: items.length % PALETTE }, true);
+  }
+
+  // ---- presets alinhados ao calendário; voltar/avançar passo a passo no preset atual ----
+  const PRESETS = { w1: { days: 7 }, m1: { months: 1 }, m3: { months: 3 }, m6: { months: 6 }, y1: { years: 1 }, y2: { years: 2 }, y5: { years: 5 }, y10: { years: 10 }, all: {} };
+  let preset = 'all';
+  function alignedRange(key, centerT) {
+    const p = PRESETS[key], c = new Date(centerT);
+    if (p.days) { const wd = (c.getDay() + 6) % 7, s = new Date(c.getFullYear(), c.getMonth(), c.getDate() - wd); return [s.getTime(), new Date(s.getFullYear(), s.getMonth(), s.getDate() + p.days).getTime()]; }
+    if (p.months) { const m = c.getMonth() - (c.getMonth() % p.months), s = new Date(c.getFullYear(), m, 1); return [s.getTime(), new Date(s.getFullYear(), s.getMonth() + p.months, 1).getTime()]; }
+    if (p.years) { const s = new Date(c.getFullYear(), 0, 1); return [s.getTime(), new Date(s.getFullYear() + p.years, 0, 1).getTime()]; }
+    return domain();
+  }
+  function shiftBy(t, key, dir) {
+    const p = PRESETS[key], x = new Date(t);
+    if (p.days) return new Date(x.getFullYear(), x.getMonth(), x.getDate() + dir * p.days).getTime();
+    if (p.months) return new Date(x.getFullYear(), x.getMonth() + dir * p.months, x.getDate()).getTime();
+    if (p.years) return new Date(x.getFullYear() + dir * p.years, x.getMonth(), x.getDate()).getTime();
+    return t + dir * (view[1] - view[0]);
+  }
+  const presetBtns = document.querySelectorAll('[data-preset]');
+  presetBtns.forEach((b) => b.addEventListener('click', () => {
+    preset = b.dataset.preset;
+    presetBtns.forEach((o) => { o.dataset.active = String(o === b); });
+    const r = alignedRange(preset, view[0] + (view[1] - view[0]) / 2);
+    setView(r[0], r[1]);
+  }));
+  $('#prev').addEventListener('click', () => setView(shiftBy(view[0], preset, -1), shiftBy(view[1], preset, -1)));
+  $('#next').addEventListener('click', () => setView(shiftBy(view[0], preset, 1), shiftBy(view[1], preset, 1)));
+
+  // ---- editor ----
+  const dlg = $('#dlg'), form = $('#form'), fLabel = $('#f-label'), fStart = $('#f-start'), fEnd = $('#f-end');
+  const swatches = $('#swatches'), errEl = $('#err'), delBtn = $('#del'), confirmRow = $('#confirm'), saveBtn = $('#save'), titleEl = $('#dlg-title');
+  let draft = null, isNew = false;
+  for (let i = 0; i < PALETTE; i++) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'swatch'; b.style.background = 'var(--ev-' + i + ')';
+    b.setAttribute('aria-label', 'Cor ' + (i + 1)); b.dataset.i = i;
+    b.addEventListener('click', () => { if (!draft) return; draft.color = i; paintSwatches(); });
+    swatches.appendChild(b);
+  }
+  function paintSwatches() { swatches.querySelectorAll('.swatch').forEach((b) => { b.dataset.active = String(draft && draft.color === Number(b.dataset.i)); }); }
+  function validate() {
+    const ok = draft.label.trim().length > 0 && draft.end > draft.start;
+    errEl.hidden = !(draft.end <= draft.start); saveBtn.disabled = !ok || !canWrite; return ok;
+  }
+  function openEditor(it, nw) {
+    draft = Object.assign({}, it); isNew = nw;
+    titleEl.textContent = nw ? 'Novo evento' : 'Editar evento';
+    fLabel.value = draft.label; fStart.value = toInput(draft.start); fEnd.value = toInput(draft.end);
+    delBtn.hidden = nw || !canWrite; confirmRow.hidden = true; saveBtn.hidden = false;
+    paintSwatches(); validate(); dlg.hidden = false;
+    setTimeout(() => fLabel.focus(), 0);
+  }
+  function closeEditor() { dlg.hidden = true; draft = null; }
+  fLabel.addEventListener('input', () => { draft.label = fLabel.value; validate(); });
+  fStart.addEventListener('change', () => { if (fStart.value) { draft.start = fromInput(fStart.value); validate(); } });
+  fEnd.addEventListener('change', () => { if (fEnd.value) { draft.end = fromInput(fEnd.value); validate(); } });
+  $('#close').addEventListener('click', closeEditor);
+  dlg.addEventListener('pointerdown', (e) => { if (e.target === dlg) closeEditor(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !dlg.hidden) closeEditor(); });
+  delBtn.addEventListener('click', () => { confirmRow.hidden = false; delBtn.hidden = true; saveBtn.hidden = true; });
+  $('#del-no').addEventListener('click', () => { confirmRow.hidden = true; delBtn.hidden = false; saveBtn.hidden = false; });
+  $('#del-yes').addEventListener('click', () => { if (draft) remove(draft.id); closeEditor(); });
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!draft || !validate()) return;
+    const it = Object.assign({}, draft, { label: draft.label.trim() });
+    const idx = items.findIndex((i) => i.id === it.id);
+    if (idx >= 0) items[idx] = it; else items.push(it);
+    persist(it); closeEditor(); setView(view[0], view[1]);
+  });
+
+  // ---- persistência ----
+  const queue = new Map();
+  const enqueue = (id, fn) => { const p = (queue.get(id) || Promise.resolve()).then(fn, fn); queue.set(id, p); return p; };
+  function setStatus(t) { statusEl.textContent = t; }
+  function readOnly() { canWrite = false; document.documentElement.dataset.ro = '1'; setStatus('Somente leitura'); }
+  function persist(it) {
+    if (!db) return;
+    const body = { label: it.label, lane: it.lane, start: it.start, end: it.end, color: it.color };
+    enqueue(it.id, () => db.collection('events').doc(it.id).set(body)).catch((err) => {
+      if (err && err.code === 'invalid_argument') readOnly(); else setStatus('Não foi possível salvar. Tente de novo.');
+    });
+  }
+  function remove(id) {
+    items = items.filter((i) => i.id !== id); setView(view[0], view[1]);
+    if (!db) return;
+    enqueue(id, () => db.collection('events').doc(id).delete()).catch(() => setStatus('Não foi possível excluir. Tente de novo.'));
+  }
+  function applySnap(snap) {
+    items = snap.docs.map((dc) => {
+      const d = dc.data() || {};
+      return { id: dc.id, label: String(d.label == null ? '' : d.label), lane: Math.max(0, Number(d.lane) || 0), start: Number(d.start) || 0, end: Number(d.end) || 0, color: ((Number(d.color) || 0) % PALETTE + PALETTE) % PALETTE };
+    }).filter((i) => i.end > i.start);
+    if (!loaded) { loaded = true; view = domain(); } else view = clampView(view[0], view[1], domain());
+    render();
+  }
+
+  // ---- medidas ----
+  let lastH = 0;
+  const ro = new ResizeObserver((entries) => {
+    let changed = false;
+    for (const en of entries) {
+      if (en.target === track) { const w = en.contentRect.width || width, h = en.contentRect.height; if (w !== width || h !== lastH) { width = w; lastH = h; changed = true; } }
+      else if (en.target === mini) { const w = en.contentRect.width || miniW; if (w !== miniW) { miniW = w; changed = true; } }
+    }
+    if (changed) render();
+  });
+  ro.observe(track); ro.observe(mini);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(render);
+
+  render();
+
+  (async () => {
+    const C = window.claude;
+    if (!C || typeof C.use !== 'function') { loaded = true; setStatus('Sem conexão com o banco: as alterações ficam só nesta aba.'); render(); return; }
+    let store = null, user = null;
+    try { [store, user] = await Promise.all([C.use('db'), C.use('user')]); } catch (_) { /* fica offline */ }
+    if (user) { try { if ((await user.can('data.write')) === false) readOnly(); } catch (_) { /* segue como escrita permitida */ } }
+    if (!store) { loaded = true; setStatus('Sem conexão com o banco: as alterações ficam só nesta aba.'); render(); return; }
+    db = store;
+    db.collection('events').onSnapshot((snap) => {
+      if (draggingId) { pendingSnap = snap; return; }
+      applySnap(snap);
+      if (canWrite) setStatus('');
+    }, () => { loaded = true; setStatus('Não foi possível carregar os eventos.'); render(); });
+  })();
+})();
+</script>

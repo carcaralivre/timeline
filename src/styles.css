@@ -1,0 +1,228 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design system definition.
+ *
+ * The @theme inline block maps CSS custom properties to Tailwind utility
+ * classes (e.g. --color-primary -> bg-primary, text-primary).
+ *
+ * The :root and .dark blocks define the actual color values using oklch.
+ * All colors MUST use oklch format.
+ *
+ * To add a new semantic color:
+ * 1. Add the variable to :root (light value) and .dark (dark value)
+ * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-border-strong: var(--border-strong);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+}
+
+:root {
+  --radius: 0.75rem;
+  --background: #FAF8F4;
+  --foreground: #1A1917;
+  --card: #F5F2EC;
+  --card-foreground: #1A1917;
+  --popover: #FAF8F4;
+  --popover-foreground: #1A1917;
+  --primary: #2D2D2B;
+  --primary-foreground: #FAF8F4;
+  --secondary: #EFEBE3;
+  --secondary-foreground: #1A1917;
+  --muted: #F0EDE7;
+  --muted-foreground: #6B6760;
+  --accent: #EFEBE3;
+  --accent-foreground: #1A1917;
+  --destructive: #A03030;
+  --destructive-foreground: #FDF0F0;
+  --border: #E5E0D5;
+  --border-strong: #CFC9BC;
+  --input: #E5E0D5;
+  --ring: #2D2D2B;
+  --surface: #F5F2EC;
+  --surface-raised: #EFEBE3;
+  --surface-sunken: #FDFCFA;
+  --chart-1: #3D7A5E; --chart-2: #A0692A; --chart-3: #2C5282; --chart-4: #6B6760; --chart-5: #A03030;
+  --sidebar: #F5F2EC; --sidebar-foreground: #1A1917; --sidebar-primary: #2D2D2B;
+  --sidebar-primary-foreground: #FAF8F4; --sidebar-accent: #EFEBE3; --sidebar-accent-foreground: #1A1917;
+  --sidebar-border: #E5E0D5; --sidebar-ring: #2D2D2B;
+  --ev-0: oklch(0.88 0.07 10);
+  --ev-1: oklch(0.79 0.09 28);
+  --ev-2: oklch(0.88 0.07 46);
+  --ev-3: oklch(0.79 0.09 64);
+  --ev-4: oklch(0.88 0.07 82);
+  --ev-5: oklch(0.79 0.09 100);
+  --ev-6: oklch(0.88 0.07 118);
+  --ev-7: oklch(0.79 0.09 136);
+  --ev-8: oklch(0.88 0.07 154);
+  --ev-9: oklch(0.79 0.09 172);
+  --ev-10: oklch(0.88 0.07 190);
+  --ev-11: oklch(0.79 0.09 208);
+  --ev-12: oklch(0.88 0.07 226);
+  --ev-13: oklch(0.79 0.09 244);
+  --ev-14: oklch(0.88 0.07 262);
+  --ev-15: oklch(0.79 0.09 280);
+  --ev-16: oklch(0.88 0.07 298);
+  --ev-17: oklch(0.79 0.09 316);
+  --ev-18: oklch(0.88 0.07 334);
+  --ev-19: oklch(0.79 0.09 352);
+  --shadow-sm: 0 1px 2px rgba(26,25,23,0.05);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+}
+
+@utility tl-surface {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+@utility tl-item {
+  position: absolute;
+  height: 44px;
+  border: 1px solid color-mix(in oklab, var(--foreground) 12%, transparent);
+  border-radius: 8px;
+  touch-action: none;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: border-color 100ms ease, background-color 100ms ease;
+  cursor: grab;
+  &:hover { border-color: var(--foreground); }
+  &[data-dragging="true"] { cursor: grabbing; border-color: var(--foreground); opacity: 0.9; z-index: 10; }
+}
+@utility tl-window {
+  position: absolute;
+  top: 0; bottom: 0;
+  background: color-mix(in oklab, var(--foreground) 8%, transparent);
+  border: 1px solid var(--foreground);
+  border-radius: 8px;
+  cursor: grab;
+  &:active { cursor: grabbing; }
+}
+@utility tl-handle {
+  position: absolute;
+  top: 50%;
+  margin-top: -16px;
+  width: 12px; height: 32px;
+  background: var(--background);
+  border: 1px solid var(--foreground);
+  border-radius: 4px;
+  cursor: ew-resize;
+}
+@utility tl-btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 36px; padding: 8px 12px;
+  border-radius: 8px; font-size: 14px; color: var(--muted-foreground);
+  transition: background-color 100ms ease, color 100ms ease;
+  &:hover { background: var(--surface-raised); color: var(--foreground); }
+  @media (max-width: 639px) { min-height: 44px; }
+}
+@utility tl-btn-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 1px solid var(--border-strong); color: var(--foreground);
+  transition: background-color 100ms ease;
+  &:hover { background: var(--surface-raised); }
+  @media (max-width: 639px) { width: 44px; height: 44px; }
+}
+@utility tl-btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500;
+  background: var(--primary); color: var(--primary-foreground);
+  transition: background-color 100ms ease;
+  &:hover { background: var(--foreground); }
+}
+@utility tl-btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px; border-radius: 8px; font-size: 14px;
+  border: 1px solid var(--border-strong);
+  transition: background-color 100ms ease;
+  &:hover { background: var(--surface-raised); }
+}
+
+@utility tl-swatch {
+  width: 32px; height: 32px; border-radius: 9999px;
+  border: 1px solid color-mix(in oklab, var(--foreground) 12%, transparent);
+  transition: border-color 100ms ease;
+  &:hover { border-color: var(--foreground); }
+  &[data-active="true"] { outline: 2px solid var(--foreground); outline-offset: 2px; }
+}
+@utility tl-btn-danger {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500;
+  background: var(--destructive-foreground); color: var(--destructive);
+  border: 1px solid transparent;
+  transition: border-color 100ms ease;
+  &:hover { border-color: var(--destructive); }
+}
+@utility tl-input {
+  width: 100%; min-height: 40px; padding: 8px 12px; font-size: 14px;
+  background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 8px;
+  outline: none; transition: border-color 100ms ease;
+  &:focus { border-color: var(--primary); }
+  &::placeholder { color: #A09A91; }
+}
